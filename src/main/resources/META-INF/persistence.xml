@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+    <persistence-unit name="Entretiens" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <mapping-file>META-INF/orm.xml</mapping-file>
+        <class>fr.ua.iutlens.rdv.model.Candidat</class>
+        <class>fr.ua.iutlens.rdv.model.Formation</class>
+        <class>fr.ua.iutlens.rdv.model.ChoixCandCren</class>
+        <class>fr.ua.iutlens.rdv.model.Creneau</class>
+        <properties>
+            <property name="hibernate.Log" value="hibernate.jdbc.SQL=ERROR"/>
+            <property name="hibernate.log" value="org.hibernate=WARN"/>
+            <property name="javax.persistence.target-database" value="PostgreSQL" />
+            <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/entretien" />
+            <property name="javax.persistence.jdbc.user" value="hemery" />
+            <property name="javax.persistence.jdbc.password" value="tolkien" />
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL91Dialect"/>
+            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>-->
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.hbm2ddl.auto" value="create"/>
+            <!--<property name="hibernate.hbm2ddl.auto" value="update"/>-->
+            <!--<property name="hibernate.hbm2ddl.auto" value="create-drop"/>-->
+        </properties>
+    </persistence-unit>
+</persistence>
