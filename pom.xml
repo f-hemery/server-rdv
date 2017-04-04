@@ -132,7 +132,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>fr.ua.iutlens.rdv.PopulateEtudiants</mainClass>
+                            <mainClass>fr.ua.iutlens.rdv.EntretienService</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
