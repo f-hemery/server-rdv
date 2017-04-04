@@ -28,7 +28,7 @@ dependencies {
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     manifest {
-        attributes 'Main-Class': 'fr.ua.iutlens.rdv.PopulateEtudiants'
+        attributes 'Main-Class': 'fr.ua.iutlens.rdv.EntretienService'
     }
 }
 
