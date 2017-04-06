@@ -72,6 +72,7 @@ public class EntretienService {
             List<Candidat> candidats = LesDonnees.getAllCandidats();
 //            LesDonnees.closeLesDonnees();
             response.status(200);
+            response.header("Access-Control-Allow-Origin","*");
             response.type("application/json");
             return dataToJson(LesDonnees.getAllCandidats());
         });
