@@ -3,6 +3,7 @@ package fr.ua.iutlens.rdv;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.ua.iutlens.rdv.model.Candidat;
+import fr.ua.iutlens.rdv.model.Formation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.ModelAndView;
@@ -78,6 +79,19 @@ public class EntretienService {
         });
 
 //        LesDonnees.closeLesDonnees();
+
+        get("/formations", (request, response) -> {
+            logger.debug("[SERVEUR] Requête \"/formations\" Current Date : {}", getCurrentDate());
+//            LesDonnees.openLesDonnees();
+            List<Formation> formations = LesDonnees.getAllFormations();
+//            LesDonnees.closeLesDonnees();
+            response.status(200);
+            response.header("Access-Control-Allow-Origin","*");
+            response.type("application/json");
+            return dataToJson(LesDonnees.getAllFormations());
+        });
+
+
 
     }
 

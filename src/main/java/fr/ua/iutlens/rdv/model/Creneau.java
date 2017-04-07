@@ -17,6 +17,7 @@ public class Creneau {
     private Formation Formation;
     private Date dateCreneau;
     private int nbCreneaux;
+    private int nbPlaces;
     private Date heureCreneau;
     private int intervalle;
     private boolean visible;

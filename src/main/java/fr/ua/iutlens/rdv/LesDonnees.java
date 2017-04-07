@@ -35,6 +35,15 @@ public class LesDonnees {
         return formation;
     }
 
+    public static List<Formation> getAllFormations() {
+        TypedQuery<Formation> typedQuery = em.createQuery("select f from Formation f", Formation.class);
+        List<Formation> list = typedQuery.getResultList();
+        System.out.println(String.format("Nombre de formations %d ", list.size()));
+        Logger logger = LogManager.getLogger(LesDonnees.class);
+        logger.debug("[SELECT] Nombre de formations  : {}", list.size());
+        return list;
+    }
+
     public static List<Candidat> getAllCandidats() {
 //        Query query = em.createNamedQuery( "searchCandidatByNoDossier" );
         TypedQuery<Candidat> typedQuery = em.createQuery("select c from Candidat c", Candidat.class);
