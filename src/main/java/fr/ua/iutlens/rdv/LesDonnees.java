@@ -103,7 +103,10 @@ public class LesDonnees {
         creneau.setNbPlaces(nbPlaces);
         creneau.setIntervalle(intervalle);
         creneau.setVisible(visible);
-        return null;
+        em.getTransaction().begin();
+        em.persist(creneau);
+        em.getTransaction().commit();
+        return creneau;
     }
 
 
