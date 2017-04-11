@@ -136,6 +136,7 @@ public class EntretienService {
                 response.type("application/json");
                 return creneau.getId();
             } catch (JsonParseException jpe) {
+                logger.error(jpe.getMessage());
                 response.status(HTTP_BAD_REQUEST);
                 return "";
             }
