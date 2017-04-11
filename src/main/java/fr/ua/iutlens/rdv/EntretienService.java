@@ -1,9 +1,12 @@
 package fr.ua.iutlens.rdv;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import fr.ua.iutlens.rdv.model.Candidat;
+import fr.ua.iutlens.rdv.model.Creneau;
 import fr.ua.iutlens.rdv.model.Formation;
+import lombok.Data;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import spark.ModelAndView;
@@ -16,10 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
+import static spark.Spark.*;
+
 //import static spark.Spark.port;
-import static spark.Spark.port;
-import static spark.Spark.staticFileLocation;
-import static spark.Spark.get;
 
 /**
  * Created by hemery on 03/04/2017.
@@ -51,6 +54,21 @@ public class EntretienService {
         return 4567; //return default port if heroku-port isn't set (i.e. on localhost)
     }
 
+    @Data
+    static class NewCreneauPayload {
+        private String lieu;
+        private String codeFormation;
+        private Date dateHeureCreneau;
+        private int nbCreneaux;
+        private int nbPlaces;
+        private int intervalle;
+        private boolean visible;
+
+        public boolean isValid() {
+            return !codeFormation.isEmpty() && !lieu.isEmpty() && dateHeureCreneau != null;
+        }
+    }
+
     public static void main(String[] args) {
         Logger logger = LogManager.getLogger(EntretienService.class);
         logger.debug("[SERVEUR] Current Date : {}", getCurrentDate());
@@ -73,7 +91,7 @@ public class EntretienService {
             List<Candidat> candidats = LesDonnees.getAllCandidats();
 //            LesDonnees.closeLesDonnees();
             response.status(200);
-            response.header("Access-Control-Allow-Origin","*");
+            response.header("Access-Control-Allow-Origin", "*");
             response.type("application/json");
             return dataToJson(LesDonnees.getAllCandidats());
         });
@@ -86,11 +104,42 @@ public class EntretienService {
             List<Formation> formations = LesDonnees.getAllFormations();
 //            LesDonnees.closeLesDonnees();
             response.status(200);
-            response.header("Access-Control-Allow-Origin","*");
+            response.header("Access-Control-Allow-Origin", "*");
             response.type("application/json");
-            return dataToJson(LesDonnees.getAllFormations());
+            return dataToJson(formations);
         });
 
+        get("/creneaux", (request, response) -> {
+            logger.debug("[SERVEUR] Requête \"/creneaux\" Current Date : {}", getCurrentDate());
+//            LesDonnees.openLesDonnees();
+            List<Creneau> creneaux = LesDonnees.getAllCreneaux();
+//            LesDonnees.closeLesDonnees();
+            response.status(200);
+            response.header("Access-Control-Allow-Origin", "*");
+            response.type("application/json");
+            return dataToJson(creneaux);
+        });
+
+        post("/creneau", (request, response) -> {
+            logger.debug("[SERVEUR] Requête POST \"/creneau\" Current Date : {}", getCurrentDate());
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                NewCreneauPayload creation = mapper.readValue(request.body(), NewCreneauPayload.class);
+                if (!creation.isValid()) {
+                    response.status(HTTP_BAD_REQUEST);
+                    return "";
+                }
+                Creneau creneau = LesDonnees.createCreneau(creation.getCodeFormation(),
+                        creation.getLieu(), creation.getDateHeureCreneau(), creation.getNbCreneaux(),
+                        creation.getNbPlaces(), creation.getIntervalle(), creation.isVisible());
+                response.status(200);
+                response.type("application/json");
+                return creneau.getId();
+            } catch (JsonParseException jpe) {
+                response.status(HTTP_BAD_REQUEST);
+                return "";
+            }
+        });
 
 
     }
