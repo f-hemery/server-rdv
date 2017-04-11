@@ -93,4 +93,19 @@ public class Creneau {
     public void setVisible(boolean visible) {
         this.visible = visible;
     }
+
+    @Override
+    public String toString() {
+        return "Creneau{" +
+                "id=" + id +
+                ", lieu='" + lieu + '\'' +
+                ", Formation=" + Formation +
+                ", dateCreneau=" + dateCreneau +
+                ", nbCreneaux=" + nbCreneaux +
+                ", nbPlaces=" + nbPlaces +
+                ", heureCreneau=" + heureCreneau +
+                ", intervalle=" + intervalle +
+                ", visible=" + visible +
+                '}';
+    }
 }

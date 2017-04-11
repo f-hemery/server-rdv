@@ -106,6 +106,8 @@ public class LesDonnees {
         em.getTransaction().begin();
         em.persist(creneau);
         em.getTransaction().commit();
+        Logger logger = LogManager.getLogger(LesDonnees.class);
+        logger.info("nouveau creneau: " + creneau);
         return creneau;
     }
 
