@@ -94,19 +94,25 @@ public class LesDonnees {
         return getCandidat(candidat.getNoDossier());
     }
 
-    public static Creneau createCreneau(String codeFormation, String lieu, Date dateHeure, int nbCreneaux, int nbPlaces, int intervalle, boolean visible) {
+    public static Creneau createCreneau(String codeFormation, String lieu, Date dateHeure, int nbCreneaux, int dureeCreneau, int nbPlaces, int intervalle, boolean visible) {
+        Logger logger = LogManager.getLogger(LesDonnees.class);
+        logger.info("nouveau creneau: début");
         Creneau creneau = new Creneau();
         creneau.setFormation(getFormation(codeFormation));
         creneau.setLieu(lieu);
         creneau.setDateCreneau(dateHeure);
         creneau.setNbCreneaux(nbCreneaux);
+        creneau.setDureeCreneau(dureeCreneau);
         creneau.setNbPlaces(nbPlaces);
         creneau.setIntervalle(intervalle);
         creneau.setVisible(visible);
-        em.getTransaction().begin();
-        em.persist(creneau);
-        em.getTransaction().commit();
-        Logger logger = LogManager.getLogger(LesDonnees.class);
+        try {
+            em.getTransaction().begin();
+            em.persist(creneau);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
         logger.info("nouveau creneau: " + creneau);
         return creneau;
     }

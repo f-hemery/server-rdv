@@ -56,16 +56,18 @@ public class EntretienService {
 
     @Data
     static class NewCreneauPayload {
+        private long id;
         private String lieu;
         private String codeFormation;
-        private Date dateHeureCreneau;
+        private Date dateCreneau;
         private int nbCreneaux;
+        private int dureeCreneau;
         private int nbPlaces;
         private int intervalle;
         private boolean visible;
 
         public boolean isValid() {
-            return !codeFormation.isEmpty() && !lieu.isEmpty() && dateHeureCreneau != null;
+            return !codeFormation.isEmpty() && !lieu.isEmpty() && dateCreneau != null;
         }
     }
 
@@ -124,24 +126,33 @@ public class EntretienService {
             logger.debug("[SERVEUR] Requête POST \"/creneau\" Current Date : {}", getCurrentDate());
             try {
                 ObjectMapper mapper = new ObjectMapper();
+                logger.debug("[SERVEUR] Requête POST \"/creneau\" ici : {}", request.body());
                 NewCreneauPayload creation = mapper.readValue(request.body(), NewCreneauPayload.class);
+                logger.debug("[SERVEUR] Requête POST \"/creneau\" ici2 : {}", getCurrentDate());
                 if (!creation.isValid()) {
+                    logger.debug("[SERVEUR] Requête POST \"/creneau\" invalide : {}", getCurrentDate());
                     response.status(HTTP_BAD_REQUEST);
                     return "";
                 }
                 Creneau creneau = LesDonnees.createCreneau(creation.getCodeFormation(),
-                        creation.getLieu(), creation.getDateHeureCreneau(), creation.getNbCreneaux(),
+                        creation.getLieu(), creation.getDateCreneau(), creation.getNbCreneaux(),creation.getDureeCreneau(),
                         creation.getNbPlaces(), creation.getIntervalle(), creation.isVisible());
+                logger.debug("[SERVEUR] Requête POST \"/creneau\" Current creneau : {}", creneau);
                 response.status(200);
+                response.header("Access-Control-Allow-Origin", "*");
                 response.type("application/json");
                 return creneau.getId();
             } catch (JsonParseException jpe) {
+                logger.debug("[SERVEUR] Requête POST \"/creneau\" jsonerror : {}", jpe.getMessage());
                 logger.error(jpe.getMessage());
+                response.status(HTTP_BAD_REQUEST);
+                return "";
+            } catch (IOException ioe) {
+                logger.debug("[SERVEUR] Requête POST \"/creneau\" ioerror : {}", ioe.getMessage());
                 response.status(HTTP_BAD_REQUEST);
                 return "";
             }
         });
-
 
     }
 

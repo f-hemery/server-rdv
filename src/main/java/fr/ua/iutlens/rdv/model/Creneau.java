@@ -17,8 +17,8 @@ public class Creneau {
     private Formation Formation;
     private Date dateCreneau;
     private int nbCreneaux;
+    private int dureeCreneau;
     private int nbPlaces;
-    private Date heureCreneau;
     private int intervalle;
     private boolean visible;
 
@@ -70,14 +70,6 @@ public class Creneau {
         this.nbPlaces = nbPlaces;
     }
 
-    public Date getHeureCreneau() {
-        return heureCreneau;
-    }
-
-    public void setHeureCreneau(Date heureCreneau) {
-        this.heureCreneau = heureCreneau;
-    }
-
     public int getIntervalle() {
         return intervalle;
     }
@@ -94,6 +86,14 @@ public class Creneau {
         this.visible = visible;
     }
 
+    public int getDureeCreneau() {
+        return dureeCreneau;
+    }
+
+    public void setDureeCreneau(int dureeCreneau) {
+        this.dureeCreneau = dureeCreneau;
+    }
+
     @Override
     public String toString() {
         return "Creneau{" +
@@ -102,8 +102,8 @@ public class Creneau {
                 ", Formation=" + Formation +
                 ", dateCreneau=" + dateCreneau +
                 ", nbCreneaux=" + nbCreneaux +
+                ", dureeCreneau=" + dureeCreneau +
                 ", nbPlaces=" + nbPlaces +
-                ", heureCreneau=" + heureCreneau +
                 ", intervalle=" + intervalle +
                 ", visible=" + visible +
                 '}';

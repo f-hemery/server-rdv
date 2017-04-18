@@ -14,10 +14,10 @@
             <property name="hibernate.log" value="org.hibernate=WARN"/>
             <property name="javax.persistence.target-database" value="PostgreSQL" />
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/entretien" />
-            <property name="javax.persistence.jdbc.user" value="hemery" />
-            <property name="javax.persistence.jdbc.password" value="tolkien" />
-            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL91Dialect"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://ec2-50-17-236-15.compute-1.amazonaws.com:5432/d31becgcjlqnbg?user=ohqlccuocprdpr&amp;password=f34dc3cdc6adb0364d920180dafa11ca255b81f73812de315b6d740aafbd84b6&amp;sslmode=require&amp;sslfactory=org.postgresql.ssl.NonValidatingFactory" />
+            <!--<property name="javax.persistence.jdbc.user" value="ohqlccuocprdpr" />-->
+            <!--<property name="javax.persistence.jdbc.password" value="f34dc3cdc6adb0364d920180dafa11ca255b81f73812de315b6d740aafbd84b6" />-->
+            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL9Dialect"/>-->
             <!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>-->
             <property name="hibernate.show_sql" value="false"/>
             <!--<property name="hibernate.hbm2ddl.auto" value="create"/>-->
