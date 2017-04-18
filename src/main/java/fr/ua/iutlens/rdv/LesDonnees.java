@@ -2,6 +2,7 @@ package fr.ua.iutlens.rdv;
 
 
 import fr.ua.iutlens.rdv.model.Candidat;
+import fr.ua.iutlens.rdv.model.Creneau;
 import fr.ua.iutlens.rdv.model.Formation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,6 +56,17 @@ public class LesDonnees {
         return list;
     }
 
+    public static List<Creneau> getAllCreneaux() {
+//        Query query = em.createNamedQuery( "searchCandidatByNoDossier" );
+        TypedQuery<Creneau> typedQuery = em.createQuery("select c from Creneau c", Creneau.class);
+
+        List<Creneau> list = typedQuery.getResultList();
+        System.out.println(String.format("Nombre de creneaux %d ", list.size()));
+        Logger logger = LogManager.getLogger(LesDonnees.class);
+        logger.debug("[SELECT] Nombre de creneaux  : {}", list.size());
+        return list;
+    }
+
     public static Candidat getCandidat(String noDossier) {
 //        Query query = em.createNamedQuery( "searchCandidatByNoDossier" );
         TypedQuery<Candidat> typedQuery = em.createNamedQuery("searchCandidatByNoDossier", Candidat.class);
@@ -81,6 +93,30 @@ public class LesDonnees {
         em.getTransaction().commit();
         return getCandidat(candidat.getNoDossier());
     }
+
+    public static Creneau createCreneau(String codeFormation, String lieu, Date dateHeure, int nbCreneaux, int dureeCreneau, int nbPlaces, int intervalle, boolean visible) {
+        Logger logger = LogManager.getLogger(LesDonnees.class);
+        logger.info("nouveau creneau: début");
+        Creneau creneau = new Creneau();
+        creneau.setFormation(getFormation(codeFormation));
+        creneau.setLieu(lieu);
+        creneau.setDateCreneau(dateHeure);
+        creneau.setNbCreneaux(nbCreneaux);
+        creneau.setDureeCreneau(dureeCreneau);
+        creneau.setNbPlaces(nbPlaces);
+        creneau.setIntervalle(intervalle);
+        creneau.setVisible(visible);
+        try {
+            em.getTransaction().begin();
+            em.persist(creneau);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
+        logger.info("nouveau creneau: " + creneau);
+        return creneau;
+    }
+
 
     public static void openLesDonnees() {
         Logger logger = LogManager.getLogger(LesDonnees.class);
