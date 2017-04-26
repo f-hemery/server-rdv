@@ -19,7 +19,7 @@
             <property name="javax.persistence.jdbc.password" value="tolkien" />
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL91Dialect"/>
             <!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>-->
-            <property name="hibernate.show_sql" value="false"/>
+            <!--<property name="hibernate.show_sql" value="false"/>-->
             <!--<property name="hibernate.hbm2ddl.auto" value="create"/>-->
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <!--<property name="hibernate.hbm2ddl.auto" value="create-drop"/>-->

@@ -6,6 +6,14 @@ import java.util.Date;
 /**
  * Created by hemery on 02/04/2017.
  */
+@NamedQueries( {
+        @NamedQuery(
+                name = "searchCreneauxFromTo",
+                query = "select c from Creneau c where c.dateCreneau  between :from and :to order by c.dateCreneau"),
+        @NamedQuery(
+                name = "searchCreneauById",
+                query = "select c from Creneau c where c.id = :id")
+})
 @Entity
 public class Creneau {
     @Id
@@ -14,12 +22,14 @@ public class Creneau {
     private String lieu;
     @ManyToOne
     @JoinColumn(nullable = false, name = "formation_id")
-    private Formation Formation;
+    private Formation formation;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreneau;
-    private int nbCreneaux;
+//    private int nbCreneaux;
     private int dureeCreneau;
     private int nbPlaces;
-    private int intervalle;
+    @Transient
+    private int nbPlacesDispo;
     private boolean visible;
 
     public long getId() {
@@ -39,11 +49,11 @@ public class Creneau {
     }
 
     public fr.ua.iutlens.rdv.model.Formation getFormation() {
-        return Formation;
+        return formation;
     }
 
     public void setFormation(fr.ua.iutlens.rdv.model.Formation formation) {
-        Formation = formation;
+        this.formation = formation;
     }
 
     public Date getDateCreneau() {
@@ -54,28 +64,21 @@ public class Creneau {
         this.dateCreneau = dateCreneau;
     }
 
-    public int getNbCreneaux() {
-        return nbCreneaux;
-    }
-
-    public void setNbCreneaux(int nbCreneaux) {
-        this.nbCreneaux = nbCreneaux;
-    }
-
     public int getNbPlaces() {
         return nbPlaces;
     }
 
     public void setNbPlaces(int nbPlaces) {
         this.nbPlaces = nbPlaces;
+        this.setNbPlacesDispo(nbPlaces);
     }
 
-    public int getIntervalle() {
-        return intervalle;
+    public int getNbPlacesDispo() {
+        return nbPlacesDispo;
     }
 
-    public void setIntervalle(int intervalle) {
-        this.intervalle = intervalle;
+    public void setNbPlacesDispo(int nbPlacesDispo) {
+        this.nbPlacesDispo = nbPlacesDispo;
     }
 
     public boolean isVisible() {
@@ -99,12 +102,11 @@ public class Creneau {
         return "Creneau{" +
                 "id=" + id +
                 ", lieu='" + lieu + '\'' +
-                ", Formation=" + Formation +
+                ", formation=" + formation +
                 ", dateCreneau=" + dateCreneau +
-                ", nbCreneaux=" + nbCreneaux +
                 ", dureeCreneau=" + dureeCreneau +
                 ", nbPlaces=" + nbPlaces +
-                ", intervalle=" + intervalle +
+                ", nbPlacesDispo=" + nbPlacesDispo +
                 ", visible=" + visible +
                 '}';
     }

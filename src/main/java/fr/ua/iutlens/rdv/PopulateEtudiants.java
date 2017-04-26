@@ -1,7 +1,10 @@
 package fr.ua.iutlens.rdv;
 
 import fr.ua.iutlens.rdv.model.Candidat;
+import fr.ua.iutlens.rdv.model.CandidatFormation;
 import fr.ua.iutlens.rdv.model.Formation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 //import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -17,6 +20,7 @@ import java.util.*;
 public class PopulateEtudiants {
 
     private static Calendar cal = Calendar.getInstance();
+    private static Logger logger = LogManager.getLogger(PopulateEtudiants.class);
 
 
     /**
@@ -51,26 +55,7 @@ public class PopulateEtudiants {
         return new Date(cal.getTimeInMillis());
     }
 
-
-    /**
-     * No Dossier	INE	Civilité	Nom	Prénom	Date de naissance	Nationalité	Langue
-     * Téléphone	Téléphone portable	Mail
-     * Adresse	Adresse1	Adresse2	Adresse3	Code postal	Commune	Commune etr.	Pays
-     * Dernier établissement	Dernier diplome
-     * Code formation	Libellé formation
-     * Date du voeux	Date de Transmission
-     * Statut du dossier	Date de modification du statut du dossier
-     * Date de Réception	Date statut complet	Date statut incomplet
-     * Type de traitement	Type de traitement validé
-     * Date de dernière modification des pièces
-     * Commission
-     * Avis	Avis validé	Date de validation	Motif	Rang	Présélection	Commentaire	Confirmation/Désistement
-     */
-
-
     public void listeCandidats(String filename) {
-        List<Candidat> liste = new ArrayList<Candidat>();
-        LesDonnees.openLesDonnees();
         try {
             Workbook wb = readFile(filename);
             Sheet sheet = wb.getSheetAt(0);
@@ -106,14 +91,7 @@ public class PopulateEtudiants {
                 candidat.setDernierEtab(uneValeur(row.getCell(numCell++)));
                 candidat.setDernierDip(uneValeur(row.getCell(numCell++)));
                 String code = uneValeur(row.getCell(numCell++));
-                Formation formation = LesDonnees.getFormation(code);
-                if (formation == null) {
-                    formation = new Formation();
-                    formation.setCodeFormation(code);
-                    formation.setLibelleFormation(uneValeur(row.getCell(numCell++)));
-                    formation = LesDonnees.createFormation(formation);
-                }
-                candidat.setFormation(formation);
+                String libelle = uneValeur(row.getCell(numCell++));
                 candidat.setDateVoeux(getDate(uneValeur(row.getCell(numCell++))));
                 candidat.setDateTrans(getDate(uneValeur(row.getCell(numCell++))));
                 candidat.setStatutDossier(uneValeur(row.getCell(numCell++)));
@@ -121,28 +99,38 @@ public class PopulateEtudiants {
                 candidat.setDateReceptionDossier(getDate(uneValeur(row.getCell(numCell++))));
                 candidat.setDateCompletDossier(getDate(uneValeur(row.getCell(numCell++))));
                 candidat.setDateIncompletDossier(getDate(uneValeur(row.getCell(numCell++))));
-                System.out.println(candidat);
-                liste.add(candidat);
+                Formation formation = LesDonnees.getFormation(code);
+                if (formation == null) {
+                    formation = new Formation();
+                    formation.setCodeFormation(code);
+                    formation.setLibelleFormation(libelle);
+                    formation = LesDonnees.createFormation(formation);
+                    logger.debug("listeCandidats create formation : {}", String.format("%3d %s %50s",formation.getId(), formation.getCodeFormation(), formation.getLibelleFormation()));
+                }
+                Candidat c = LesDonnees.getCandidatByName(candidat.getNom(),candidat.getPrenom(),candidat.getDdn());
+                CandidatFormation cf;
+                if (c == null) {
+                    LesDonnees.createCandidat(candidat);
+                    logger.debug("listeCandidats create candidat {}",candidat.getNom());
+                    cf = new CandidatFormation(candidat, formation);
+                }
+                else {
+                    cf = new CandidatFormation(c, formation);
+                }
+                LesDonnees.createCandidatFormation(cf);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InvalidFormatException e) {
             e.printStackTrace();
         }
-        for (Candidat candidat : liste) {
-            Candidat c = LesDonnees.getCandidat(candidat.getNoDossier());
-            if (c == null)
-                LesDonnees.createCandidat(candidat);
-            else
-                System.err.println(String.format("WARNING : Le candidat %s %s avec le numéro de dossier %s est déjà dans la base", candidat.getPrenom(), candidat.getNom(), candidat.getNoDossier()));
-        }
-        LesDonnees.closeLesDonnees();
     }
 
     public static void main(String[] args) {
         PopulateEtudiants populateEtudiants = new PopulateEtudiants();
+        LesDonnees.openLesDonnees();
         populateEtudiants.listeCandidats("liste.xlsx");
+        LesDonnees.closeLesDonnees();
     }
 
 }

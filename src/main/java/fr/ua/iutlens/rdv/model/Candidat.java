@@ -1,8 +1,12 @@
 package fr.ua.iutlens.rdv.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by hemery on 02/04/2017.
@@ -12,12 +16,18 @@ import java.util.Date;
                 name = "searchCandidatById",
                 query = "select c from Candidat c where c.id = :id"),
         @NamedQuery(
+                name = "searchCandidatByName",
+                query = "select c from Candidat c where c.nom = :nom and c.prenom = :prenom and c.ddn = :ddn"),
+        @NamedQuery(
                 name = "searchAllCandidats",
                 query = "select c from Candidat c"),
         @NamedQuery(
-        name = "searchCandidatByNoDossier",
-        query = "select c from Candidat c where c.noDossier = :nodossier")}
-)
+                name = "searchCandidatByNoDossier",
+                query = "select c from Candidat c where c.noDossier = :nodossier"),
+        @NamedQuery(
+                name = "searchCandidatByIne",
+                query = "select c from Candidat c where c.ine = :ine")
+})
 @Entity
 public class Candidat {
 
@@ -30,6 +40,7 @@ public class Candidat {
     private String civilite;
     private String nom;
     private String prenom;
+    @Temporal(TemporalType.DATE)
     private Date ddn;
     private String nationalite;
     private String langue;
@@ -46,15 +57,22 @@ public class Candidat {
     private String pays;
     private String dernierEtab;
     private String dernierDip;
-    @ManyToOne
-    @JoinColumn(nullable = false, name = "formation_id")
-    private Formation formation;
+    @JsonIgnore
+    @OneToMany(mappedBy = "candidat", fetch = FetchType.EAGER)
+    private Set<CandidatFormation> candidatFormations =
+            new HashSet<CandidatFormation>();
+    @Temporal(TemporalType.DATE)
     private Date dateVoeux;
+    @Temporal(TemporalType.DATE)
     private Date dateTrans;
     private String statutDossier;
+    @Temporal(TemporalType.DATE)
     private Date dateModifStatutDossier;
+    @Temporal(TemporalType.DATE)
     private Date dateReceptionDossier;
+    @Temporal(TemporalType.DATE)
     private Date dateCompletDossier;
+    @Temporal(TemporalType.DATE)
     private Date dateIncompletDossier;
 
     public long getId() {
@@ -233,13 +251,22 @@ public class Candidat {
         this.dernierDip = dernierDip;
     }
 
-    public Formation getFormation() {
-        return formation;
+    public Set<CandidatFormation> getCandidatFormations() {
+        return candidatFormations;
     }
 
-    public void setFormation(Formation formation) {
-        this.formation = formation;
+    public void setCandidatFormations(Set<CandidatFormation> candidatFormations) {
+        this.candidatFormations = candidatFormations;
     }
+/*
+    public Set<Formation> getFormations() {
+        return formations;
+    }
+
+    public void setFormations(Set<Formation> formations) {
+        this.formations = formations;
+    }
+*/
 
     public Date getDateVoeux() {
         return dateVoeux;
@@ -322,7 +349,6 @@ public class Candidat {
                 ", pays='" + pays + '\'' +
                 ", dernierEtab='" + dernierEtab + '\'' +
                 ", dernierDip='" + dernierDip + '\'' +
-                ", formation=" + formation +
                 ", dateVoeux=" + dateVoeux +
                 ", dateTrans=" + dateTrans +
                 ", statutDossier='" + statutDossier + '\'' +

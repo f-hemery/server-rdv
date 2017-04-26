@@ -1,6 +1,10 @@
 package fr.ua.iutlens.rdv.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by hemery on 02/04/2017.
@@ -15,17 +19,25 @@ import javax.persistence.*;
 public class Formation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     @Column(name = "code_formation")
     private String codeFormation;
     @Column(name = "libelle_formation")
     private String libelleFormation;
 
-    public int getId() {
+    @JsonIgnore
+    @OneToMany(mappedBy = "formation")
+    private Set<CandidatFormation> candidatFormations =
+            new HashSet<CandidatFormation>();
+
+    @Transient
+    private int nbCandidats;
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -45,6 +57,19 @@ public class Formation {
         this.libelleFormation = libelleFormation;
     }
 
+    public Set<CandidatFormation> getCandidatFormations() {
+        return candidatFormations;
+    }
+
+    public void setCandidatFormations(Set<CandidatFormation> candidatFormations) {
+        this.candidatFormations = candidatFormations;
+    }
+
+    public int getNbCandidats() {
+        nbCandidats = candidatFormations.size();
+        return nbCandidats;
+    }
+
     @Override
     public String toString() {
         return "Formation{" +
@@ -52,5 +77,13 @@ public class Formation {
                 ", codeFormation='" + codeFormation + '\'' +
                 ", libelleFormation='" + libelleFormation + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Formation))
+            return false;
+        Formation formation = (Formation)obj;
+        return formation.getCodeFormation().equals(getCodeFormation()) && formation.getLibelleFormation().equals(getLibelleFormation());
     }
 }
